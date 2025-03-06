@@ -1,25 +1,31 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set the working directory in the container
-WORKDIR /app
-
-# Install required system packages for PyMuPDF
+# Install system dependencies required for PyMuPDF
 RUN apt-get update && apt-get install -y \
     build-essential \
-    gcc \
-    libmupdf-dev \
-    libfreetype6-dev \
-    && apt-get clean
+    libpoppler-cpp-dev \
+    libpng-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the current directory contents into the container at /app
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the current directory contents into the container
 COPY . /app
 
 # Install Python dependencies from requirements.txt
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Expose port (Render uses port 10000 by default for Flask)
-EXPOSE 10000
+# Expose port for Flask
+EXPOSE 5000
 
-# Define the command to run the app
-CMD ["python", "app.py"]
+# Define the environment variable for Flask app to listen on all interfaces
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+
+# Run Flask when the container launches
+CMD ["flask", "run"]
