@@ -32,4 +32,4 @@ def resize_pdf():
     return send_file(output_pdf, download_name="resized.pdf", as_attachment=True, mimetype="application/pdf")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=10000)
